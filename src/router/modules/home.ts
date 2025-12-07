@@ -3,21 +3,21 @@ const Layout = () => import("@/layout/index.vue");
 
 export default {
   path: "/",
-  name: "Home",
+  name: "Block",
   component: Layout,
-  redirect: "/welcome",
+  redirect: "/block",
   meta: {
     icon: "ep/home-filled",
-    title: "首页",
+    title: "板块",
     rank: 0
   },
   children: [
     {
-      path: "/welcome",
-      name: "Welcome",
-      component: () => import("@/views/welcome/index.vue"),
+      path: "/block",
+      name: "block",
+      component: () => import("@/views/block/index.vue"),
       meta: {
-        title: "首页",
+        title: "板块",
         showLink: VITE_HIDE_HOME === "true" ? false : true
       }
     }

@@ -42,7 +42,7 @@ export function getPluginsList(
     removeNoMatch(),
     // mock支持
     vitePluginFakeServer({
-      logger: false,
+      logger: true,
       include: "mock",
       infixName: false,
       enableProd: true
