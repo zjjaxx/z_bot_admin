@@ -26,6 +26,15 @@ export default {
         title: "策略详情",
         showLink: false
       }
+    },
+    {
+      path: "/strategy/:name/:id",
+      name: "strategyDetailById",
+      component: () => import("@/views/strategy/orderDetail.vue"),
+      meta: {
+        title: "订单详情",
+        showLink: false
+      }
     }
   ]
 } satisfies RouteConfigsTable;

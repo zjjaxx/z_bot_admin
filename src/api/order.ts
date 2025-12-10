@@ -30,3 +30,19 @@ export const generateOrderListQueryOptions = (strategyName: string) => {
     queryFn: () => getOrderList(strategyName)
   };
 };
+export const getOrderDetailList = (strategyName: string, symbol: string) => {
+  return http.request<Result>(
+    "get",
+    baseUrlApi("getStrategyOrderDetail") +
+      `?strategy_name=${strategyName}&symbol=${symbol}`
+  );
+};
+export const generateOrderDetailListQueryOptions = (
+  strategyName: string,
+  symbol: string
+) => {
+  return {
+    queryKey: ["orderDetailList", strategyName, symbol],
+    queryFn: () => getOrderDetailList(strategyName, symbol)
+  };
+};

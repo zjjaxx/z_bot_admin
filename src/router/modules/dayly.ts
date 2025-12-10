@@ -6,7 +6,7 @@ export default {
   meta: {
     icon: "ep/home-filled",
     title: "每日推荐",
-    rank: 1
+    rank: 2
   },
   children: [
     {

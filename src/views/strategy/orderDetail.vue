@@ -2,7 +2,7 @@
   <div class="strategy-detail-container">
     <!-- 页面标题 -->
     <div class="strategy-detail-header">
-      <h2>策略详情</h2>
+      <h2>订单详情</h2>
     </div>
 
     <!-- 策略基本信息卡片 -->
@@ -53,14 +53,6 @@
         <el-table-column prop="date" label="订单日期" min-width="120" />
         <el-table-column prop="shares" label="订单数量" min-width="120" />
         <el-table-column prop="fill_price" label="订单价格" min-width="120" />
-        <el-table-column #default="scope" label="操作">
-          <el-button
-            type="primary"
-            size="small"
-            @click="handleViewDetail(scope.row)"
-            >查看详情</el-button
-          >
-        </el-table-column>
       </el-table>
 
       <!-- 分页 -->
@@ -72,47 +64,6 @@
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
           :total="orderList.length"
-        />
-      </div>
-    </el-card>
-
-    <!-- 股票代码列表 -->
-    <el-card shadow="hover" class="stock-symbols-card">
-      <template #header>
-        <div class="card-header">
-          <span>交易列表</span>
-        </div>
-      </template>
-
-      <el-table
-        v-loading="isPending"
-        :data="tradeListWithIndex"
-        stripe
-        style="width: 100%"
-        empty-text="暂无股票代码数据"
-        border
-      >
-        <el-table-column label="序号" type="index" width="80" />
-        <el-table-column prop="symbol" label="股票代码" min-width="120" />
-        <el-table-column prop="entry_date" label="买入日期" min-width="120" />
-        <el-table-column prop="exit_date" label="卖出日期" min-width="120" />
-        <el-table-column prop="entry" label="买入价格" min-width="120" />
-        <el-table-column prop="exit" label="卖出价格" min-width="120" />
-        <el-table-column prop="shares" label="订单数量" min-width="120" />
-        <el-table-column prop="pnl" label="收益" min-width="120" />
-        <el-table-column prop="agg_pnl" label="累计收益" min-width="120" />
-        <el-table-column prop="return_pct" label="收益率" min-width="120" />
-      </el-table>
-
-      <!-- 分页 -->
-      <div class="pagination-container">
-        <el-pagination
-          v-if="tradeList.length > 0"
-          v-model:current-page="currentPage"
-          v-model:page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="tradeList.length"
         />
       </div>
     </el-card>
@@ -133,41 +84,28 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useQuery } from "@tanstack/vue-query";
-import { generateOrderListQueryOptions } from "@/api/order";
+import { generateOrderDetailListQueryOptions } from "@/api/order";
 import { generateTradeListQueryOptions } from "@/api/trade";
-import { useRoute, useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
-import { Download, DocumentCopy } from "@element-plus/icons-vue";
-import { formatDate } from "@/utils/date";
+import { useRoute } from "vue-router";
 
 defineOptions({
-  name: "StrategyDetail"
+  name: "OrderDetail"
 });
 
 const route = useRoute();
-const router = useRouter();
 const strategyName = route.params.name as string;
+const id = route.params.id as string;
 
 // 分页参数
 const currentPage = ref(1);
 const pageSize = ref(20);
 
 const { isPending, isError, data } = useQuery(
-  generateOrderListQueryOptions(strategyName)
+  generateOrderDetailListQueryOptions(strategyName, id)
 );
-
-// 交易列表
-const {
-  isPending: isTradePending,
-  isError: isTradeError,
-  data: tradeData
-} = useQuery(generateTradeListQueryOptions(strategyName));
 
 // 订单列表
 const orderList = computed(() => data.value?.data || []);
-
-// 交易列表
-const tradeList = computed(() => tradeData.value?.data || []);
 
 // 添加序号的订单列表（用于分页）
 const orderListWithIndex = computed(() => {
@@ -177,20 +115,6 @@ const orderListWithIndex = computed(() => {
     ...order
   }));
 });
-
-const tradeListWithIndex = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return tradeList.value.slice(start, end).map(trade => ({
-    ...trade
-  }));
-});
-const handleViewDetail = (row: any) => {
-  router.push({
-    name: "strategyDetailById",
-    params: { name: strategyName, id: row.symbol }
-  });
-};
 </script>
 
 <style scoped>
